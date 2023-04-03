@@ -1,47 +1,54 @@
 package com.driver;
 
-import com.driver.Director;
-import com.driver.Movie;
-import com.driver.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.ClientInfoStatus;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
 @Service
 public class MovieService {
-
-    //check if movie already exist in List other wise add it in to List
     @Autowired
-    MovieRepository mr;
-    public  String addMovie(Movie movie) {
-
-        return mr.addMovie(movie);
+    MovieRepository movieRepository;
+    //1 Add Movie
+    public String addMovie(Movie movie){
+        return movieRepository.addMovie(movie);
     }
-    public  String addDirector(Director director) {
-        return  mr.addDirector(director);
+    //2 Add Director
+    public String addDirector(Director director){
+        return movieRepository.addDirector(director);
     }
-    public String addPair(String movieName,String dirName){
-
-        return mr.addPair(mr.getMovieByName(movieName),mr.getDirectorByName(dirName));
+    //3 Add Movie-Director pair
+    public String addMovieDirectorPair(String movieName,String directorName){
+        return movieRepository.addMovieDirectorPair(movieName,directorName);
     }
+    //4 Get movie by Name
     public Movie getMovieByName(String name){
-        return mr.getMovieByName(name);
+        return movieRepository.getMovieByName(name);
     }
+    //5 Get director by Name
     public Director getDirectorByName(String name){
-        return mr.getDirectorByName(name);
+        return movieRepository.getDirectorByName(name);
     }
-    public List<String> getMoviesByDirectorName(String name){
-        Director director = mr.getDirectorByName(name);
-        return mr.getListByDir(director);
+    //6 Get movies By Director
+    public List<String> getMoviesByDirectorName(String directorName){
+        HashMap<String,List<String>> list =movieRepository.getAllMovieDirectorPairs();
+        return list.get(directorName);
     }
-    public List<Movie> findAllMovies(){
-        return mr.getListMovieList();
+    //7 Get all movies
+    public List<String> findAllMovies(){
+        HashMap<String,Movie> movies =movieRepository.getAllMovies();
+        // here an ArrayList is returned by using collection call
+        return new ArrayList<>(movies.keySet());
     }
-    public String deleteDirectorByName(String name){
-        Director d = mr.getDirectorByName(name);
-        return mr.deleteDirector(d);
+    //8 Delete director by name
+    public String deleteDirectorByName(String directorName){
+        return movieRepository.deleteDirectorByName(directorName);
     }
-    public String deleteAll(){
-        return mr.deleteAll();
+    //9 delete all directors
+    public String deleteAllDirectors(){
+        return movieRepository.deleteAllDirectors();
     }
 }
